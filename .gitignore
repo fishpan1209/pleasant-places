@@ -7,3 +7,8 @@ bin
 pkg
 work
 src/github.com
+
+.DS_Store
+.idea/
+data/.DS_Store
+data/**/
