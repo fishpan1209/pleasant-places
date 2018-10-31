@@ -13,6 +13,7 @@ class CommutingZone(object):
         self.counties = {}
         self.grids = []
         self.total = -1
+        self.pop = 0
 
     def consolidate_zips(self):
         zips = []
@@ -31,6 +32,7 @@ class CommutingZone(object):
 
     def add_grid(self, grid):
         self.grids.append(grid)
+        self.pop += grid.pop
 
     def calc_match(self):
         matched_zips = [z for grid in self.grids for z in grid.zips]

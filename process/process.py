@@ -11,12 +11,30 @@ class Grid(object):
 
     def add_zips(self, zips):
         self.zips = zips
+        zip_pop = load_pop()
+
+        total_pop = 0
+        for zip in zips:
+            if zip in zip_pop:
+                total_pop += zip_pop[zip]
+        self.pop = total_pop
+
 
     def __eq__(self, other):
         if isinstance(other, Grid):
             return self.I == other.I and self.J == other.J
         return NotImplemented
 
+def load_pop():
+    zip_pop = {}
+    with open("../data/population-by-zip.csv") as file:
+        csv_reader = csv.reader(file, delimiter=',')
+        next(csv_reader, None)  # skip the headers
+
+        for row in csv_reader:
+            zip, pop = row[0], int(row[1])
+            zip_pop[zip] = pop
+    return zip_pop
 
 
 def load_norm():
@@ -79,7 +97,7 @@ def is_sublist(sublist, lst):
     if not sublist:
         return True
     inter = set(sublist).intersection(set(lst))
-    return len(inter) / float(len(sublist)) >= 0.6
+    return len(inter) / float(len(sublist)) >= 0.5
 
 def match_grid_to_cz(grid, cz_map):
     if not grid:
@@ -93,18 +111,19 @@ def match_grid_to_cz(grid, cz_map):
 
 
 def calc_pd(cz_map, norm):
+
     csv = open("out.csv", "w")
     columnTitleRow = "cz_id, days, match_rate\n"
     csv.write(columnTitleRow)
 
     for id, cz in cz_map.iteritems():
         total = 0
-        size = 0
+
         for grid in cz.grids:
-            total += norm[grid.key]
-            size += 1
-        if size:
-            cz.total = round(total / float(size),1)
+            if cz.pop:
+                total += norm[grid.key] * grid.pop / cz.pop
+                cz.total = round(total, 1)
+
         row = "{},{},{}\n".format(str(id), str(cz.total), str(round(cz.match_rate, 2)))
         csv.write(row)
 
