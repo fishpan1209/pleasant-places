@@ -5,7 +5,7 @@ data/isd-history.csv
 data/isd-inventory.csv.z
 bin
 pkg
-work
+work/z/
 src/github.com
 
 .DS_Store
